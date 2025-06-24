@@ -1,4 +1,4 @@
-"""
+
 const { Telegraf, Markup } = require('telegraf');
 const { v4: uuidv4 } = require('uuid');
 const config = require('./config.json');
@@ -18,8 +18,8 @@ const messages = {
     choose_crypto: "💰 Which crypto do you want to buy?",
     enter_usdt_amount: "💸 How many USDT do you want?",
     enter_trx_amount: "💸 How many TRX do you want?",
-    result_usdt: (amt, rate) => `✅ You’ll pay approximately ${(amt * rate).toLocaleString()} MMK`,
-    result_trx: (amt, rate) => `✅ You’ll pay approximately ${(amt * rate).toLocaleString()} MMK`,
+    result_usdt: (amt, rate) => `✅ You'll pay approximately ${(amt * rate).toLocaleString()} MMK`,
+    result_trx: (amt, rate) => `✅ You'll pay approximately ${(amt * rate).toLocaleString()} MMK`,
     payment_details: "💳 Please transfer MMK to:\\n\\n🔹 KBZPay: Htun Sein 09777888283\\n🔹 UABPay: Htun Sein 09666000106",
     ask_proof: "📤 Upload your payment screenshot:",
     thanks_proof: "✅ Proof received! Admin will verify shortly.",
@@ -232,10 +232,3 @@ process.once("SIGINT", () => bot.stop("SIGINT"));
 process.once("SIGTERM", () => bot.stop("SIGTERM"));
 bot.launch();
 console.log("✅ NeoXchange bot running with full features and status updates");
-"""
-
-full_path = "/mnt/data/index_polished_full_status.js"
-with open(full_path, "w") as f:
-    f.write(full_index_code)
-
-full_path
