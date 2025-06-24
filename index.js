@@ -269,6 +269,9 @@ bot.action(/approve_order_(.+)/, ctx => {
   o.status = "Order Approved";
   const lang = o.lang;
   
+  // Answer the callback query first to stop loading
+  ctx.answerCbQuery("Order approved!");
+  
   // Send payment details to user
   bot.telegram.sendMessage(o.user_id, 
     `✅ Your order has been approved!\n🆔 Order ID: ${oid}\n💎 ${o.crypto}: ${o.amount}\n💵 Total: ${o.total_mmk} MMK\n\n${messages[lang].payment_details}`, {
@@ -280,7 +283,6 @@ bot.action(/approve_order_(.+)/, ctx => {
   });
   
   ctx.editMessageText(`✅ Order Approved\n🆔 ${oid}\n👤 @${o.username}\n💎 ${o.crypto}: ${o.amount}`);
-  ctx.answerCbQuery("Order approved!");
 });
 
 bot.action(/deny_order_(.+)/, ctx => {
