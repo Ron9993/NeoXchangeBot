@@ -9,6 +9,9 @@ const userStage = {};
 const userOrders = {};
 let currentRates = { usdt: "4600", trx: "1300" };
 
+// Clear any existing webhooks and set up polling properly
+bot.telegram.deleteWebhook().catch(() => {});
+
 const messages = {
   en: {
     welcome: "🌐 Welcome to NeoXchange!\\nPlease choose your language:",
@@ -228,7 +231,38 @@ bot.on("text", ctx => {
   }
 });
 
-process.once("SIGINT", () => bot.stop("SIGINT"));
-process.once("SIGTERM", () => bot.stop("SIGTERM"));
-bot.launch();
-console.log("✅ NeoXchange bot running with full features and status updates");
+// Graceful shutdown handlers
+process.once("SIGINT", () => {
+  console.log("🛑 Received SIGINT, stopping bot...");
+  bot.stop("SIGINT");
+});
+
+process.once("SIGTERM", () => {
+  console.log("🛑 Received SIGTERM, stopping bot...");
+  bot.stop("SIGTERM");
+});
+
+// Handle uncaught exceptions to prevent crashes
+process.on('uncaughtException', (error) => {
+  console.error('❌ Uncaught Exception:', error);
+  bot.stop();
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('❌ Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
+// Launch bot with error handling
+bot.launch({
+  polling: {
+    timeout: 30,
+    limit: 100,
+    allowedUpdates: ['message', 'callback_query']
+  }
+}).then(() => {
+  console.log("✅ NeoXchange bot running with full features and status updates");
+}).catch((error) => {
+  console.error("❌ Bot launch failed:", error);
+  process.exit(1);
+});
