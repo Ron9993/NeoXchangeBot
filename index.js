@@ -353,7 +353,7 @@ bot.telegram.setMyCommands([
   { command: 'buy', description: '💰 Buy Crypto' },
   { command: 'upload', description: '📤 Upload Payment Proof' },
   { command: 'track', description: '🔍 Track Order' },
-  { command: 'language', description: '🌐 Change Language' }
+  { command: 'language', description: '🌐 Language / 语言 / ဘာသာစကား' }
 ]);
 
 bot.launch();
