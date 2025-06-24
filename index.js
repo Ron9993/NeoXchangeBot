@@ -103,6 +103,45 @@ bot.command("language", ctx => {
   ]));
 });
 
+bot.command("menu", ctx => {
+  const id = ctx.from.id;
+  const lang = userLang[id] || 'en';
+  sendMenu(ctx, lang);
+});
+
+bot.command("rates", ctx => {
+  const id = ctx.from.id;
+  const lang = userLang[id] || 'en';
+  const msg = messages[lang].rates
+    .replace("{usdt}", currentRates.usdt)
+    .replace("{trx}", currentRates.trx);
+  ctx.replyWithMarkdown(msg);
+});
+
+bot.command("buy", ctx => {
+  const id = ctx.from.id;
+  const lang = userLang[id] || 'en';
+  userStage[id] = null;
+  ctx.reply(messages[lang].choose_crypto, Markup.inlineKeyboard([
+    [Markup.button.callback("💵 USDT", "buy_usdt")],
+    [Markup.button.callback("🪙 TRX", "buy_trx")]
+  ]));
+});
+
+bot.command("upload", ctx => {
+  const id = ctx.from.id;
+  const lang = userLang[id] || 'en';
+  userStage[id] = "upload_proof";
+  ctx.reply(messages[lang].ask_proof);
+});
+
+bot.command("track", ctx => {
+  const id = ctx.from.id;
+  const lang = userLang[id] || 'en';
+  userStage[id] = "track";
+  ctx.reply(messages[lang].ask_track);
+});
+
 bot.action(/lang_(.+)/, ctx => {
   const id = ctx.from.id;
   const lang = ctx.match[1];
