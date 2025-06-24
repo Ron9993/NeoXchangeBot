@@ -315,5 +315,15 @@ bot.on("text", ctx => {
 
 process.once("SIGINT", () => bot.stop("SIGINT"));
 process.once("SIGTERM", () => bot.stop("SIGTERM"));
+// Set up persistent menu commands
+bot.telegram.setMyCommands([
+  { command: 'menu', description: '📋 Main Menu' },
+  { command: 'rates', description: '💱 Current Rates' },
+  { command: 'buy', description: '💰 Buy Crypto' },
+  { command: 'upload', description: '📤 Upload Payment Proof' },
+  { command: 'track', description: '🔍 Track Order' },
+  { command: 'language', description: '🌐 Change Language' }
+]);
+
 bot.launch();
 console.log("✅ NeoXchange bot running with full features and status updates");
