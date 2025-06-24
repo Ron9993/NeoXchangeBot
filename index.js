@@ -99,10 +99,10 @@ bot.start(ctx => {
 
 bot.command("language", ctx => {
   const id = ctx.from.id;
-  ctx.reply("🌐 Change Language / 更改语言 / ဘာသာစကား ပြောင်းရန်:", Markup.inlineKeyboard([
-    [Markup.button.callback("🇬🇧 English | 英语 | အင်္ဂလိပ်", "lang_en")],
-    [Markup.button.callback("🇨🇳 Chinese | 中文 | တရုတ်", "lang_zh")],
-    [Markup.button.callback("🇲🇲 Myanmar | 缅甸语 | မြန်မာ", "lang_my")]
+  ctx.reply(messages['en'].welcome, Markup.inlineKeyboard([
+    [Markup.button.callback("🇬🇧 English", "lang_en")],
+    [Markup.button.callback("🇨🇳 中文", "lang_zh")],
+    [Markup.button.callback("🇲🇲 မြန်မာ", "lang_my")]
   ]));
 });
 
@@ -270,7 +270,7 @@ bot.action(/status_(processing|sent)_(.+)/, ctx => {
   const lang = o.lang;
   bot.telegram.sendMessage(o.user_id, messages[lang].current_status(o.status), { parse_mode: "Markdown" });
   ctx.answerCbQuery(`Status set to ${o.status}`);
-
+  
   if (status === "processing") {
     // After setting to Processing, show Sent button
     ctx.editMessageText(`🛠 Status updated to: Processing\n🆔 Order ID: ${oid}`, {
