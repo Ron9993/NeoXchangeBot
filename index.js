@@ -138,8 +138,8 @@ bot.on("photo", async ctx => {
       caption: `📥 New Proof\n🆔 ${orderId}\n👤 @${ctx.from.username || "User"} (ID: ${id})`,
       reply_markup: {
         inline_keyboard: [
-          [{ text: "✅ Approve", callback_data: approve_${orderId} }],
-          [{ text: "❌ Reject", callback_data: reject_${orderId} }]
+          [{ text: "✅ Approve", callback_data: `approve_${orderId}` }],
+          [{ text: "❌ Reject", callback_data: `reject_${orderId}` }]
         ]
       }
     });
@@ -158,8 +158,8 @@ bot.action(/approve_(.+)/, ctx => {
   bot.telegram.sendMessage(config.ADMIN_ID, `🛠 Set status for Order ID: ${oid}`, {
     reply_markup: {
       inline_keyboard: [
-        [{ text: "⚙️ Set Processing", callback_data: status_processing_${oid} }],
-        [{ text: "✅ Set Sent", callback_data: status_sent_${oid} }]
+        [{ text: "⚙️ Set Processing", callback_data: `status_processing_${oid}` }],
+        [{ text: "✅ Set Sent", callback_data: `status_sent_${oid}` }]
       ]
     }
   });
