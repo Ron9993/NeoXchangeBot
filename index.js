@@ -26,7 +26,7 @@ const messages = {
     wallet_received: (w) => `✅ Wallet received: ${w}\nYour crypto will be sent soon.`,
     rejected: "❌ Payment rejected. Please contact support.",
     ask_track: "🔍 Enter Order ID to track:",
-    track_result: (id, st, w) => `🆔 Order ID: ${id}\n📦 Status: ${st}\n🏦 Wallet: ${w || 'Not provided yet'}`,
+    track_result: (id, st, w, crypto, amt) => `🆔 Order ID: ${id}\n📦 Status: ${st}\n${crypto && amt ? `💎 ${crypto}: ${amt}\n` : ''}🏦 Wallet: ${w || 'Not provided yet'}`,
     not_found: "❌ Order not found. Check the ID.",
     current_status: (st) => `🔔 Your order status is now: *${st}*`,
     txid_received: (txid) => `🔗 *Transaction ID:* \`${txid}\`\n\n✅ Your crypto has been sent! You can track this transaction on the blockchain using the above ID.`
@@ -48,7 +48,7 @@ const messages = {
     wallet_received: (w) => `✅ 钱包地址已收到：${w}\n您的加密货币将很快发送。`,
     rejected: "❌ 付款被拒绝。请联系客服。",
     ask_track: "🔍 输入订单 ID 进行跟踪：",
-    track_result: (id, st, w) => `🆔 订单 ID: ${id}\n📦 状态: ${st}\n🏦 钱包: ${w || '尚未提供'}`,
+    track_result: (id, st, w, crypto, amt) => `🆔 订单 ID: ${id}\n📦 状态: ${st}\n${crypto && amt ? `💎 ${crypto}: ${amt}\n` : ''}🏦 钱包: ${w || '尚未提供'}`,
     not_found: "❌ 未找到订单。请检查 ID。",
     current_status: (st) => `🔔 您的订单状态现在是：*${st}*`,
     txid_received: (txid) => `🔗 *交易 ID:* \`${txid}\`\n\n✅ 您的加密货币已发送！您可以使用上述 ID 在区块链上跟踪此交易。`
@@ -70,7 +70,7 @@ const messages = {
     wallet_received: (w) => `✅ Wallet လိပ်စာ ရရှိပါပြီ: ${w}\nသင်၏ crypto ကို မကြာမီ ပို့ပေးပါမည်။`,
     rejected: "❌ ငွေပေးချေမှု ငြင်းပယ်ခံရပါပြီ။ ကျေးဇူးပြု၍ အကူအညီကို ဆက်သွယ်ပါ။",
     ask_track: "🔍 စစ်ဆေးရန် Order ID ကို ရိုက်ထည့်ပါ:",
-    track_result: (id, st, w) => `🆔 Order ID: ${id}\n📦 အခြေအနေ: ${st}\n🏦 Wallet: ${w || 'မသတ်မှတ်ရသေး'}`,
+    track_result: (id, st, w, crypto, amt) => `🆔 Order ID: ${id}\n📦 အခြေအနေ: ${st}\n${crypto && amt ? `💎 ${crypto}: ${amt}\n` : ''}🏦 Wallet: ${w || 'မသတ်မှတ်ရသေး'}`,
     not_found: "❌ မှာယူမှု မတွေ့ရှိပါ။ ID ကို စစ်ဆေးပါ။",
     current_status: (st) => `🔔 သင်၏ မှာယူမှု အခြေအနေသည် ယခု: *${st}*`,
     txid_received: (txid) => `🔗 *Transaction ID:* \`${txid}\`\n\n✅ သင်၏ crypto ကို ပို့ပြီးပါပြီ! အထက်ပါ ID ကို အသုံးပြု၍ blockchain တွင် ဤ transaction ကို ခြေရာခံနိုင်ပါသည်။`
@@ -261,6 +261,43 @@ bot.action(/reject_(.+)/, ctx => {
   ctx.editMessageCaption(`❌ Rejected\n🆔 ${oid}\n👤 @${o.username}`);
 });
 
+bot.action(/approve_order_(.+)/, ctx => {
+  const oid = ctx.match[1];
+  const o = userOrders[oid];
+  if (!o) return;
+  
+  o.status = "Order Approved";
+  const lang = o.lang;
+  
+  // Send payment details to user
+  bot.telegram.sendMessage(o.user_id, 
+    `✅ Your order has been approved!\n🆔 Order ID: ${oid}\n💎 ${o.crypto}: ${o.amount}\n💵 Total: ${o.total_mmk} MMK\n\n${messages[lang].payment_details}`, {
+    reply_markup: {
+      inline_keyboard: [
+        [{ text: "📤 Upload Payment Proof", callback_data: "upload_proof" }]
+      ]
+    }
+  });
+  
+  ctx.editMessageText(`✅ Order Approved\n🆔 ${oid}\n👤 @${o.username}\n💎 ${o.crypto}: ${o.amount}`);
+  ctx.answerCbQuery("Order approved!");
+});
+
+bot.action(/deny_order_(.+)/, ctx => {
+  const oid = ctx.match[1];
+  const o = userOrders[oid];
+  if (!o) return;
+  
+  o.status = "Order Denied";
+  const lang = o.lang;
+  
+  // Notify user of denial
+  bot.telegram.sendMessage(o.user_id, `❌ Your order has been denied.\n🆔 Order ID: ${oid}\n💬 Please contact support for more information.`);
+  
+  ctx.editMessageText(`❌ Order Denied\n🆔 ${oid}\n👤 @${o.username}\n💎 ${o.crypto}: ${o.amount}`);
+  ctx.answerCbQuery("Order denied!");
+});
+
 bot.action(/status_(processing|sent)_(.+)/, ctx => {
   const status = ctx.match[1];
   const oid = ctx.match[2];
@@ -309,13 +346,40 @@ bot.on("text", ctx => {
     const amt = parseFloat(ctx.message.text.replace(/[^0-9.]/g, ""));
     if (!isNaN(amt)) {
       const rate = stage === "buy_usdt" ? +currentRates.usdt : +currentRates.trx;
+      const crypto = stage === "buy_usdt" ? "USDT" : "TRX";
+      const totalMMK = (amt * rate).toLocaleString();
+      
+      // Create pending order for admin approval
+      const orderId = uuidv4().split("-")[0].toUpperCase();
+      userOrders[orderId] = {
+        user_id: id,
+        username: ctx.from.username || "User",
+        lang,
+        status: "Pending Approval",
+        crypto: crypto,
+        amount: amt,
+        rate: rate,
+        total_mmk: totalMMK,
+        wallet: null
+      };
+      
+      // Show result to user
       const text = stage === "buy_usdt"
         ? messages[lang].result_usdt(amt, rate)
         : messages[lang].result_trx(amt, rate);
       ctx.reply(text);
-      ctx.reply(messages[lang].payment_details, Markup.inlineKeyboard([
-        [Markup.button.callback("📤 Upload Proof", "upload_proof")]
-      ]));
+      ctx.reply(`🔍 Order submitted for approval!\n🆔 Order ID: ${orderId}\n⏳ Please wait for admin approval...`);
+      
+      // Send to admin for approval
+      bot.telegram.sendMessage(config.ADMIN_ID, 
+        `💰 New Buy Order\n🆔 ${orderId}\n👤 @${ctx.from.username || "User"} (ID: ${id})\n💎 ${crypto}: ${amt}\n💵 Total: ${totalMMK} MMK\n📊 Rate: ${rate} MMK`, {
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: "✅ Approve Order", callback_data: `approve_order_${orderId}` }],
+            [{ text: "❌ Deny Order", callback_data: `deny_order_${orderId}` }]
+          ]
+        }
+      });
     }
     userStage[id] = null;
   }
@@ -323,7 +387,7 @@ bot.on("text", ctx => {
   else if (stage === "track") {
     const oid = ctx.message.text.trim().toUpperCase();
     const o = userOrders[oid];
-    if (o) ctx.reply(messages[lang].track_result(oid, o.status, o.wallet));
+    if (o) ctx.reply(messages[lang].track_result(oid, o.status, o.wallet, o.crypto, o.amount));
     else ctx.reply(messages[lang].not_found);
     userStage[id] = null;
   }
