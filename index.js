@@ -17,61 +17,21 @@ const messages = {
     choose_crypto: "💰 Which crypto do you want to buy?",
     enter_usdt_amount: "💸 How many USDT do you want?",
     enter_trx_amount: "💸 How many TRX do you want?",
-    result_usdt: (amt, rate) => `✅ You'll pay approximately ${(amt * rate).toLocaleString()} MMK`,
-    result_trx: (amt, rate) => `✅ You'll pay approximately ${(amt * rate).toLocaleString()} MMK`,
+    result_usdt: (amt, rate) => ✅ You'll pay approximately ${(amt * rate).toLocaleString()} MMK,
+    result_trx: (amt, rate) => ✅ You'll pay approximately ${(amt * rate).toLocaleString()} MMK,
     payment_details: "💳 Please transfer MMK to:\n\n🔹 KBZPay: Htun Sein 09777888283\n🔹 UABPay: Htun Sein 09666000106",
     ask_proof: "📤 Upload your payment screenshot:",
     thanks_proof: "✅ Proof received! Admin will verify shortly.",
     approved: "✅ Payment approved! Please send your TRC20 wallet address:",
-    wallet_received: (w) => `✅ Wallet received: ${w}\nYour crypto will be sent soon.`,
+    wallet_received: (w) => ✅ Wallet received: ${w}\nYour crypto will be sent soon.,
     rejected: "❌ Payment rejected. Please contact support.",
     ask_track: "🔍 Enter Order ID to track:",
-    track_result: (id, st, w) => `🆔 Order ID: ${id}\n📦 Status: ${st}\n🏦 Wallet: ${w || 'Not provided yet'}`,
+    track_result: (id, st, w) => 🆔 Order ID: ${id}\n📦 Status: ${st}\n🏦 Wallet: ${w || 'Not provided yet'},
     not_found: "❌ Order not found. Check the ID.",
-  },
-  my: {
-    welcome: "🌐 NeoXchange မှကြိုဆိုပါတယ်။\nဘာသာစကားရွေးချယ်ပါ။",
-    language_set: "✅ မြန်မာဘာသာပြောင်းပြီးပါပြီ။",
-    rates: "💱 *ဝယ်နှုန်း (MMK → Crypto)*\n\nUSDT: {usdt} MMK\nTRX: {trx} MMK",
-    menu: "ရွေးချယ်ပါ။",
-    choose_crypto: "💰 မည်သည့် crypto နဲ့ဝယ်ချင်သလဲ။",
-    enter_usdt_amount: "💸 ဘယ်နှစ် USDT ဝယ်မှာလဲ။",
-    enter_trx_amount: "💸 ဘယ်နှစ် TRX ဝယ်မှာလဲ။",
-    result_usdt: (amt, rate) => `✅ ခန့်မှန်းအလိုက် ${(amt * rate).toLocaleString()} MMK ပေးရမည်`,
-    result_trx: (amt, rate) => `✅ ခန့်မှန်းအလိုက် ${(amt * rate).toLocaleString()} MMK ပေးရမည်`,
-    payment_details: "💳 MMK ပို့ရန်:\n\n🔹 KBZPay: Htun Sein 09777888283\n🔹 UABPay: Htun Sein 09666000106",
-    ask_proof: "📤 ငွေပေးစာထဲမှ screenshot upload လုပ်ပါ။",
-    thanks_proof: "✅ ရရှိပြီးပါပြီ။ Admin အတည်ပြုမည်။",
-    approved: "✅ အတည်ပြုပြီးပါပြီ။ TRC20 wallet လိပ်စာ ပေးပါ။",
-    wallet_received: (w) => `✅ Wallet လိပ်စာ: ${w} လက်ခံပြီးပါပြီ။\nCrypto မကြာမီ ပို့ပါမည်။`,
-    rejected: "❌ ငွေပေးချေမှု မအောင်မြင်ပါ။ Support ဆက်သွယ်ပါ။",
-    ask_track: "🔍 Order ID ဖြင့် စစ်ဆေးပါ။",
-    track_result: (id, st, w) => `🆔 ငွေပေးစာ: ${id}\n📦 အခြေအနေ: ${st}\n🏦 Wallet: ${w || 'မပေးရသေးပါ'}`,
-    not_found: "❌ Order မတွေ့ပါ။ ID စစ်ပါ။",
-  },
-  zh: {
-    welcome: "🌐 欢迎来到 NeoXchange！\n请选择语言：",
-    language_set: "✅ 已切换为中文。",
-    rates: "💱 *购买汇率 (MMK → Crypto)*\n\nUSDT: {usdt} MMK\nTRX: {trx} MMK",
-    menu: "请选择操作：",
-    choose_crypto: "💰 您想买哪种加密货币？",
-    enter_usdt_amount: "💸 您要买多少 USDT？",
-    enter_trx_amount: "💸 您要买多少 TRX？",
-    result_usdt: (amt, rate) => `✅ 您需支付约 ${(amt * rate).toLocaleString()} MMK`,
-    result_trx: (amt, rate) => `✅ 您需支付约 ${(amt * rate).toLocaleString()} MMK`,
-    payment_details: "💳 汇款至：\n\n🔹 KBZPay: Htun Sein 09777888283\n🔹 UABPay: Htun Sein 09666000106",
-    ask_proof: "📤 上传付款截图：",
-    thanks_proof: "✅ 已收到！管理员会尽快审核。",
-    approved: "✅ 付款已批准！请发送您的 TRC20 钱包地址：",
-    wallet_received: (w) => `✅ 收到钱包：${w}\n您的加密货币即将发送。`,
-    rejected: "❌ 付款被拒。请联系客服。",
-    ask_track: "🔍 输入订单 ID 进行跟踪：",
-    track_result: (id, st, w) => `🆔 订单号: ${id}\n📦 状态: ${st}\n🏦 钱包: ${w || '未提供'}`,
-    not_found: "❌ 未找到订单，请检查 ID。",
+    current_status: (st) => 🔔 Your order status is now: *${st}*
   }
 };
 
-// MENU helper
 function sendMenu(ctx, lang) {
   ctx.reply(messages[lang].menu, Markup.inlineKeyboard([
     [Markup.button.callback("💱 Buy Crypto", "choose_crypto")],
@@ -175,11 +135,11 @@ bot.on("photo", async ctx => {
     };
     await ctx.reply(messages[lang].thanks_proof);
     await bot.telegram.sendPhoto(config.ADMIN_ID, fileId, {
-      caption: `📥 New Proof\n🆔 ${orderId}\n👤 @${ctx.from.username || "User"} (ID: ${id})`,
+      caption: 📥 New Proof\n🆔 ${orderId}\n👤 @${ctx.from.username || "User"} (ID: ${id}),
       reply_markup: {
         inline_keyboard: [
-          [{ text: "✅ Approve", callback_data: `approve_${orderId}` }],
-          [{ text: "❌ Reject", callback_data: `reject_${orderId}` }]
+          [{ text: "✅ Approve", callback_data: approve_${orderId} }],
+          [{ text: "❌ Reject", callback_data: reject_${orderId} }]
         ]
       }
     });
@@ -194,12 +154,12 @@ bot.action(/approve_(.+)/, ctx => {
   userStage[o.user_id] = "wallet";
   const lang = o.lang;
   bot.telegram.sendMessage(o.user_id, messages[lang].approved);
-  ctx.editMessageCaption(`✅ Approved\n🆔 ${oid}\n👤 @${o.username}`);
-  bot.telegram.sendMessage(config.ADMIN_ID, `🛠 Set status for Order ID: ${oid}`, {
+  ctx.editMessageCaption(✅ Approved\n🆔 ${oid}\n👤 @${o.username});
+  bot.telegram.sendMessage(config.ADMIN_ID, 🛠 Set status for Order ID: ${oid}, {
     reply_markup: {
       inline_keyboard: [
-        [{ text: "⚙️ Set Processing", callback_data: `status_processing_${oid}` }],
-        [{ text: "✅ Set Sent", callback_data: `status_sent_${oid}` }]
+        [{ text: "⚙️ Set Processing", callback_data: status_processing_${oid} }],
+        [{ text: "✅ Set Sent", callback_data: status_sent_${oid} }]
       ]
     }
   });
@@ -211,7 +171,7 @@ bot.action(/reject_(.+)/, ctx => {
   o.status = "Rejected";
   const lang = o.lang;
   bot.telegram.sendMessage(o.user_id, messages[lang].rejected);
-  ctx.editMessageCaption(`❌ Rejected\n🆔 ${oid}\n👤 @${o.username}`);
+  ctx.editMessageCaption(❌ Rejected\n🆔 ${oid}\n👤 @${o.username});
 });
 
 bot.action(/status_(processing|sent)_(.+)/, ctx => {
@@ -222,8 +182,8 @@ bot.action(/status_(processing|sent)_(.+)/, ctx => {
   o.status = status.charAt(0).toUpperCase() + status.slice(1);
   const lang = o.lang;
   bot.telegram.sendMessage(o.user_id, messages[lang].current_status(o.status), { parse_mode: "Markdown" });
-  ctx.answerCbQuery(`Status set to ${o.status}`);
-  ctx.editMessageText(`🛠 Status updated to: ${o.status}\n🆔 Order ID: ${oid}`);
+  ctx.answerCbQuery(Status set to ${o.status});
+  ctx.editMessageText(🛠 Status updated to: ${o.status}\n🆔 Order ID: ${oid});
 });
 
 bot.on("text", ctx => {
@@ -238,8 +198,8 @@ bot.on("text", ctx => {
       const [oid, o] = entry;
       o.wallet = w;
       ctx.reply(messages[lang].wallet_received(w));
-      ctx.reply(`🆔 Your Order ID: ${oid}`);
-      bot.telegram.sendMessage(config.ADMIN_ID, `📬 Wallet Received\n🆔 ${oid}\n👤 @${ctx.from.username || "User"}\n🏦 ${w}`);
+      ctx.reply(🆔 Your Order ID: ${oid});
+      bot.telegram.sendMessage(config.ADMIN_ID, 📬 Wallet Received\n🆔 ${oid}\n👤 @${ctx.from.username || "User"}\n🏦 ${w});
     }
     userStage[id] = null;
   }
