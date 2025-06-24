@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "@types/node": "^22.13.11",
+    "punycode": "^2.3.1",
     "telegraf": "^4.16.3",
     "uuid": "^11.1.0"
   }

@@ -1,4 +1,6 @@
+# Combine all finalized parts into one full index.js file
 
+full_index_code = """
 const { Telegraf, Markup } = require('telegraf');
 const { v4: uuidv4 } = require('uuid');
 const config = require('./config.json');
@@ -9,9 +11,6 @@ const userStage = {};
 const userOrders = {};
 let currentRates = { usdt: "4600", trx: "1300" };
 
-// Clear any existing webhooks and set up polling properly
-bot.telegram.deleteWebhook().catch(() => {});
-
 const messages = {
   en: {
     welcome: "🌐 Welcome to NeoXchange!\\nPlease choose your language:",
@@ -21,8 +20,8 @@ const messages = {
     choose_crypto: "💰 Which crypto do you want to buy?",
     enter_usdt_amount: "💸 How many USDT do you want?",
     enter_trx_amount: "💸 How many TRX do you want?",
-    result_usdt: (amt, rate) => `✅ You'll pay approximately ${(amt * rate).toLocaleString()} MMK`,
-    result_trx: (amt, rate) => `✅ You'll pay approximately ${(amt * rate).toLocaleString()} MMK`,
+    result_usdt: (amt, rate) => `✅ You’ll pay approximately ${(amt * rate).toLocaleString()} MMK`,
+    result_trx: (amt, rate) => `✅ You’ll pay approximately ${(amt * rate).toLocaleString()} MMK`,
     payment_details: "💳 Please transfer MMK to:\\n\\n🔹 KBZPay: Htun Sein 09777888283\\n🔹 UABPay: Htun Sein 09666000106",
     ask_proof: "📤 Upload your payment screenshot:",
     thanks_proof: "✅ Proof received! Admin will verify shortly.",
@@ -231,59 +230,14 @@ bot.on("text", ctx => {
   }
 });
 
-// Graceful shutdown handlers
-process.once("SIGINT", () => {
-  console.log("🛑 Received SIGINT, stopping bot...");
-  bot.stop("SIGINT");
-});
+process.once("SIGINT", () => bot.stop("SIGINT"));
+process.once("SIGTERM", () => bot.stop("SIGTERM"));
+bot.launch();
+console.log("✅ NeoXchange bot running with full features and status updates");
+"""
 
-process.once("SIGTERM", () => {
-  console.log("🛑 Received SIGTERM, stopping bot...");
-  bot.stop("SIGTERM");
-});
+full_path = "/mnt/data/index_polished_full_status.js"
+with open(full_path, "w") as f:
+    f.write(full_index_code)
 
-// Handle uncaught exceptions to prevent crashes
-process.on('uncaughtException', (error) => {
-  console.error('❌ Uncaught Exception:', error);
-  bot.stop();
-  process.exit(1);
-});
-
-process.on('unhandledRejection', (reason, promise) => {
-  console.error('❌ Unhandled Rejection at:', promise, 'reason:', reason);
-});
-
-// Launch bot with error handling
-async function startBot() {
-  try {
-    // Try to stop any existing webhook first
-    await bot.telegram.deleteWebhook({ drop_pending_updates: true });
-    
-    // Add a small delay to ensure webhook is cleared
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    await bot.launch({
-      polling: {
-        timeout: 30,
-        limit: 100,
-        allowedUpdates: ['message', 'callback_query']
-      }
-    });
-    
-    console.log("✅ NeoXchange bot running with full features and status updates");
-  } catch (error) {
-    if (error.response && error.response.error_code === 409) {
-      console.error("❌ Bot conflict detected. Another instance is already running.");
-      console.log("💡 To fix this:");
-      console.log("   1. Stop any other instances of this bot");
-      console.log("   2. If deployed, temporarily stop the deployment");
-      console.log("   3. Wait a few seconds and try again");
-      process.exit(1);
-    } else {
-      console.error("❌ Bot launch failed:", error);
-      process.exit(1);
-    }
-  }
-}
-
-startBot();
+full_path
