@@ -254,15 +254,36 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 
 // Launch bot with error handling
-bot.launch({
-  polling: {
-    timeout: 30,
-    limit: 100,
-    allowedUpdates: ['message', 'callback_query']
+async function startBot() {
+  try {
+    // Try to stop any existing webhook first
+    await bot.telegram.deleteWebhook({ drop_pending_updates: true });
+    
+    // Add a small delay to ensure webhook is cleared
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    await bot.launch({
+      polling: {
+        timeout: 30,
+        limit: 100,
+        allowedUpdates: ['message', 'callback_query']
+      }
+    });
+    
+    console.log("✅ NeoXchange bot running with full features and status updates");
+  } catch (error) {
+    if (error.response && error.response.error_code === 409) {
+      console.error("❌ Bot conflict detected. Another instance is already running.");
+      console.log("💡 To fix this:");
+      console.log("   1. Stop any other instances of this bot");
+      console.log("   2. If deployed, temporarily stop the deployment");
+      console.log("   3. Wait a few seconds and try again");
+      process.exit(1);
+    } else {
+      console.error("❌ Bot launch failed:", error);
+      process.exit(1);
+    }
   }
-}).then(() => {
-  console.log("✅ NeoXchange bot running with full features and status updates");
-}).catch((error) => {
-  console.error("❌ Bot launch failed:", error);
-  process.exit(1);
-});
+}
+
+startBot();
