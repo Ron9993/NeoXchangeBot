@@ -243,8 +243,7 @@ bot.action(/approve_(.+)/, ctx => {
   bot.telegram.sendMessage(config.ADMIN_ID, `🛠 Set status for Order ID: ${oid}`, {
     reply_markup: {
       inline_keyboard: [
-        [{ text: "⚙️ Set Processing", callback_data: `status_processing_${oid}` }],
-        [{ text: "✅ Set Sent", callback_data: `status_sent_${oid}` }]
+        [{ text: "⚙️ Set Processing", callback_data: `status_processing_${oid}` }]
       ]
     }
   });
@@ -268,7 +267,20 @@ bot.action(/status_(processing|sent)_(.+)/, ctx => {
   const lang = o.lang;
   bot.telegram.sendMessage(o.user_id, messages[lang].current_status(o.status), { parse_mode: "Markdown" });
   ctx.answerCbQuery(`Status set to ${o.status}`);
-  ctx.editMessageText(`🛠 Status updated to: ${o.status}\n🆔 Order ID: ${oid}`);
+  
+  if (status === "processing") {
+    // After setting to Processing, show Sent button
+    ctx.editMessageText(`🛠 Status updated to: Processing\n🆔 Order ID: ${oid}`, {
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: "✅ Set Sent", callback_data: `status_sent_${oid}` }]
+        ]
+      }
+    });
+  } else if (status === "sent") {
+    // Final status - no more buttons
+    ctx.editMessageText(`✅ Order Complete: Sent\n🆔 Order ID: ${oid}`);
+  }
 });
 
 bot.on("text", ctx => {
