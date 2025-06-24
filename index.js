@@ -17,18 +17,18 @@ const messages = {
     choose_crypto: "💰 Which crypto do you want to buy?",
     enter_usdt_amount: "💸 How many USDT do you want?",
     enter_trx_amount: "💸 How many TRX do you want?",
-    result_usdt: (amt, rate) => ✅ You'll pay approximately ${(amt * rate).toLocaleString()} MMK,
-    result_trx: (amt, rate) => ✅ You'll pay approximately ${(amt * rate).toLocaleString()} MMK,
+    result_usdt: (amt, rate) => `✅ You'll pay approximately ${(amt * rate).toLocaleString()} MMK`,
+    result_trx: (amt, rate) => `✅ You'll pay approximately ${(amt * rate).toLocaleString()} MMK`,
     payment_details: "💳 Please transfer MMK to:\n\n🔹 KBZPay: Htun Sein 09777888283\n🔹 UABPay: Htun Sein 09666000106",
     ask_proof: "📤 Upload your payment screenshot:",
     thanks_proof: "✅ Proof received! Admin will verify shortly.",
     approved: "✅ Payment approved! Please send your TRC20 wallet address:",
-    wallet_received: (w) => ✅ Wallet received: ${w}\nYour crypto will be sent soon.,
+    wallet_received: (w) => `✅ Wallet received: ${w}\nYour crypto will be sent soon.`,
     rejected: "❌ Payment rejected. Please contact support.",
     ask_track: "🔍 Enter Order ID to track:",
-    track_result: (id, st, w) => 🆔 Order ID: ${id}\n📦 Status: ${st}\n🏦 Wallet: ${w || 'Not provided yet'},
+    track_result: (id, st, w) => `🆔 Order ID: ${id}\n📦 Status: ${st}\n🏦 Wallet: ${w || 'Not provided yet'}`,
     not_found: "❌ Order not found. Check the ID.",
-    current_status: (st) => 🔔 Your order status is now: *${st}*
+    current_status: (st) => `🔔 Your order status is now: *${st}*`
   }
 };
 
@@ -135,7 +135,7 @@ bot.on("photo", async ctx => {
     };
     await ctx.reply(messages[lang].thanks_proof);
     await bot.telegram.sendPhoto(config.ADMIN_ID, fileId, {
-      caption: 📥 New Proof\n🆔 ${orderId}\n👤 @${ctx.from.username || "User"} (ID: ${id}),
+      caption: `📥 New Proof\n🆔 ${orderId}\n👤 @${ctx.from.username || "User"} (ID: ${id})`,
       reply_markup: {
         inline_keyboard: [
           [{ text: "✅ Approve", callback_data: approve_${orderId} }],
@@ -154,8 +154,8 @@ bot.action(/approve_(.+)/, ctx => {
   userStage[o.user_id] = "wallet";
   const lang = o.lang;
   bot.telegram.sendMessage(o.user_id, messages[lang].approved);
-  ctx.editMessageCaption(✅ Approved\n🆔 ${oid}\n👤 @${o.username});
-  bot.telegram.sendMessage(config.ADMIN_ID, 🛠 Set status for Order ID: ${oid}, {
+  ctx.editMessageCaption(`✅ Approved\n🆔 ${oid}\n👤 @${o.username}`);
+  bot.telegram.sendMessage(config.ADMIN_ID, `🛠 Set status for Order ID: ${oid}`, {
     reply_markup: {
       inline_keyboard: [
         [{ text: "⚙️ Set Processing", callback_data: status_processing_${oid} }],
@@ -171,7 +171,7 @@ bot.action(/reject_(.+)/, ctx => {
   o.status = "Rejected";
   const lang = o.lang;
   bot.telegram.sendMessage(o.user_id, messages[lang].rejected);
-  ctx.editMessageCaption(❌ Rejected\n🆔 ${oid}\n👤 @${o.username});
+  ctx.editMessageCaption(`❌ Rejected\n🆔 ${oid}\n👤 @${o.username}`);
 });
 
 bot.action(/status_(processing|sent)_(.+)/, ctx => {
@@ -182,8 +182,8 @@ bot.action(/status_(processing|sent)_(.+)/, ctx => {
   o.status = status.charAt(0).toUpperCase() + status.slice(1);
   const lang = o.lang;
   bot.telegram.sendMessage(o.user_id, messages[lang].current_status(o.status), { parse_mode: "Markdown" });
-  ctx.answerCbQuery(Status set to ${o.status});
-  ctx.editMessageText(🛠 Status updated to: ${o.status}\n🆔 Order ID: ${oid});
+  ctx.answerCbQuery(`Status set to ${o.status}`);
+  ctx.editMessageText(`🛠 Status updated to: ${o.status}\n🆔 Order ID: ${oid}`);
 });
 
 bot.on("text", ctx => {
@@ -198,8 +198,8 @@ bot.on("text", ctx => {
       const [oid, o] = entry;
       o.wallet = w;
       ctx.reply(messages[lang].wallet_received(w));
-      ctx.reply(🆔 Your Order ID: ${oid});
-      bot.telegram.sendMessage(config.ADMIN_ID, 📬 Wallet Received\n🆔 ${oid}\n👤 @${ctx.from.username || "User"}\n🏦 ${w});
+      ctx.reply(`🆔 Your Order ID: ${oid}`);
+      bot.telegram.sendMessage(config.ADMIN_ID, `📬 Wallet Received\n🆔 ${oid}\n👤 @${ctx.from.username || "User"}\n🏦 ${w}`);
     }
     userStage[id] = null;
   }
