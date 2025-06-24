@@ -28,7 +28,8 @@ const messages = {
     ask_track: "🔍 Enter Order ID to track:",
     track_result: (id, st, w) => `🆔 Order ID: ${id}\n📦 Status: ${st}\n🏦 Wallet: ${w || 'Not provided yet'}`,
     not_found: "❌ Order not found. Check the ID.",
-    current_status: (st) => `🔔 Your order status is now: *${st}*`
+    current_status: (st) => `🔔 Your order status is now: *${st}*`,
+    txid_received: (txid) => `🔗 *Transaction ID:* \`${txid}\`\n\n✅ Your crypto has been sent! You can track this transaction on the blockchain using the above ID.`
   },
   zh: {
     welcome: "🌐 欢迎来到 NeoXchange！\n请选择您的语言：",
@@ -49,7 +50,8 @@ const messages = {
     ask_track: "🔍 输入订单 ID 进行跟踪：",
     track_result: (id, st, w) => `🆔 订单 ID: ${id}\n📦 状态: ${st}\n🏦 钱包: ${w || '尚未提供'}`,
     not_found: "❌ 未找到订单。请检查 ID。",
-    current_status: (st) => `🔔 您的订单状态现在是：*${st}*`
+    current_status: (st) => `🔔 您的订单状态现在是：*${st}*`,
+    txid_received: (txid) => `🔗 *交易 ID:* \`${txid}\`\n\n✅ 您的加密货币已发送！您可以使用上述 ID 在区块链上跟踪此交易。`
   },
   my: {
     welcome: "🌐 NeoXchange မှ ကြိုဆိုပါတယ်!\nကျေးဇူးပြု၍ သင်၏ဘာသာစကားကို ရွေးချယ်ပါ:",
@@ -70,7 +72,8 @@ const messages = {
     ask_track: "🔍 စစ်ဆေးရန် Order ID ကို ရိုက်ထည့်ပါ:",
     track_result: (id, st, w) => `🆔 Order ID: ${id}\n📦 အခြေအနေ: ${st}\n🏦 Wallet: ${w || 'မသတ်မှတ်ရသေး'}`,
     not_found: "❌ မှာယူမှု မတွေ့ရှိပါ။ ID ကို စစ်ဆေးပါ။",
-    current_status: (st) => `🔔 သင်၏ မှာယူမှု အခြေအနေသည် ယခု: *${st}*`
+    current_status: (st) => `🔔 သင်၏ မှာယူမှု အခြေအနေသည် ယခု: *${st}*`,
+    txid_received: (txid) => `🔗 *Transaction ID:* \`${txid}\`\n\n✅ သင်၏ crypto ကို ပို့ပြီးပါပြီ! အထက်ပါ ID ကို အသုံးပြု၍ blockchain တွင် ဤ transaction ကို ခြေရာခံနိုင်ပါသည်။`
   }
 };
 
@@ -278,8 +281,9 @@ bot.action(/status_(processing|sent)_(.+)/, ctx => {
       }
     });
   } else if (status === "sent") {
-    // Final status - no more buttons
-    ctx.editMessageText(`✅ Order Complete: Sent\n🆔 Order ID: ${oid}`);
+    // After setting to Sent, ask for transaction ID
+    ctx.editMessageText(`✅ Order Status: Sent\n🆔 Order ID: ${oid}\n\n💬 Please reply with the crypto transaction ID:`);
+    userStage[config.ADMIN_ID] = `txid_${oid}`;
   }
 });
 
@@ -321,6 +325,21 @@ bot.on("text", ctx => {
     const o = userOrders[oid];
     if (o) ctx.reply(messages[lang].track_result(oid, o.status, o.wallet));
     else ctx.reply(messages[lang].not_found);
+    userStage[id] = null;
+  }
+
+  else if (stage && stage.startsWith("txid_")) {
+    const oid = stage.split("_")[1];
+    const txid = ctx.message.text.trim();
+    const o = userOrders[oid];
+    if (o) {
+      o.txid = txid;
+      const lang = o.lang;
+      // Send transaction ID to customer
+      bot.telegram.sendMessage(o.user_id, messages[lang].txid_received(txid), { parse_mode: "Markdown" });
+      // Confirm to admin
+      ctx.reply(`✅ Transaction ID sent to customer!\n🔗 TXID: ${txid}\n🆔 Order: ${oid}`);
+    }
     userStage[id] = null;
   }
 });
