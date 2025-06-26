@@ -210,7 +210,9 @@ bot.action("track_order", ctx => {
 bot.on("photo", async ctx => {
   const id = ctx.from.id;
   const lang = userLang[id] || 'en';
-  if(userStage[id] === "upload_proof") {
+  const stage = userStage[id];
+  
+  if(stage === "upload_proof") {
     const fileId = ctx.message.photo.slice(-1)[0].file_id;
     const orderId = uuidv4().split("-")[0].toUpperCase();
     userOrders[orderId] = {
@@ -231,6 +233,29 @@ bot.on("photo", async ctx => {
         ]
       }
     });
+    userStage[id] = null;
+  }
+  
+  // Handle admin transaction screenshot upload
+  else if (stage && stage.startsWith("tx_screenshot_") && id == config.ADMIN_ID) {
+    const oid = stage.split("_")[2];
+    const o = userOrders[oid];
+    if (o) {
+      const fileId = ctx.message.photo.slice(-1)[0].file_id;
+      o.tx_screenshot = fileId;
+      const lang = o.lang;
+      
+      // Send transaction screenshot to customer
+      await bot.telegram.sendPhoto(o.user_id, fileId, {
+        caption: `🔗 Transaction Screenshot\n🆔 Order ID: ${oid}\n💎 ${o.crypto}: ${o.amount}\n\n✅ Your crypto has been sent! Please check your wallet.`
+      });
+      
+      // Confirm to admin
+      ctx.reply(`✅ Transaction screenshot sent to customer!\n🆔 Order: ${oid}`);
+      
+      // Mark order as completed
+      o.status = "Completed";
+    }
     userStage[id] = null;
   }
 });
@@ -322,8 +347,8 @@ bot.action(/status_(processing|sent)_(.+)/, ctx => {
       }
     });
   } else if (status === "sent") {
-    // After setting to Sent, ask for transaction ID
-    ctx.editMessageText(`✅ Order Status: Sent\n🆔 Order ID: ${oid}\n\n💬 Please reply with the crypto transaction ID:`);
+    // After setting to Sent, ask for transaction ID and screenshot
+    ctx.editMessageText(`✅ Order Status: Sent\n🆔 Order ID: ${oid}\n\n📝 Please reply with the crypto transaction ID:`);
     userStage[config.ADMIN_ID] = `txid_${oid}`;
   }
 });
@@ -404,12 +429,16 @@ bot.on("text", ctx => {
     if (o) {
       o.txid = txid;
       const lang = o.lang;
+      
       // Send transaction ID to customer
       bot.telegram.sendMessage(o.user_id, messages[lang].txid_received(txid), { parse_mode: "Markdown" });
-      // Confirm to admin
-      ctx.reply(`✅ Transaction ID sent to customer!\n🔗 TXID: ${txid}\n🆔 Order: ${oid}`);
+      
+      // Ask admin for transaction screenshot
+      ctx.reply(`✅ Transaction ID sent to customer!\n🔗 TXID: ${txid}\n🆔 Order: ${oid}\n\n📸 Now please upload a screenshot of the transaction:`);
+      userStage[id] = `tx_screenshot_${oid}`;
+    } else {
+      userStage[id] = null;
     }
-    userStage[id] = null;
   }
 });
 
