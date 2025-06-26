@@ -235,6 +235,47 @@ bot.on("photo", async ctx => {
   }
 });
 
+bot.action(/approve_order_(.+)/, ctx => {
+  const oid = ctx.match[1];
+  const o = userOrders[oid];
+  if (!o) return;
+
+  o.status = "Order Approved";
+  const lang = o.lang;
+
+  // Answer the callback query first to stop loading
+  ctx.answerCbQuery("Order approved!");
+
+  // Send payment details to user
+  bot.telegram.sendMessage(o.user_id, 
+    `✅ Your order has been approved!\n🆔 Order ID: ${oid}\n💎 ${o.crypto}: ${o.amount}\n💵 Total: ${o.total_mmk.toLocaleString()} MMK\n\n${messages[lang].payment_details}`, {
+    reply_markup: {
+      inline_keyboard: [
+        [{ text: "📤 Upload Payment Proof", callback_data: "upload_proof" }]
+      ]
+    }
+  });
+
+  ctx.editMessageText(`✅ Order Approved\n🆔 ${oid}\n👤 @${o.username}\n💎 ${o.crypto}: ${o.amount}`);
+});
+
+bot.action(/deny_order_(.+)/, ctx => {
+  const oid = ctx.match[1];
+  const o = userOrders[oid];
+  if (!o) return;
+
+  o.status = "Order Denied";
+  const lang = o.lang;
+
+  ctx.answerCbQuery("Order denied!");
+
+  // Notify user
+  bot.telegram.sendMessage(o.user_id, 
+    `❌ Your order has been denied.\n🆔 Order ID: ${oid}\n💎 ${o.crypto}: ${o.amount}\n\n💬 Please contact support for more information.`);
+
+  ctx.editMessageText(`❌ Order Denied\n🆔 ${oid}\n👤 @${o.username}\n💎 ${o.crypto}: ${o.amount}`);
+});
+
 bot.action(/approve_(.+)/, ctx => {
   const oid = ctx.match[1], o = userOrders[oid];
   if (!o) return;
@@ -309,18 +350,41 @@ bot.on("text", ctx => {
     const amt = parseFloat(ctx.message.text.replace(/[^0-9.]/g, ""));
     if (!isNaN(amt)) {
       const rate = stage === "buy_usdt" ? +currentRates.usdt : +currentRates.trx;
+      const crypto = stage === "buy_usdt" ? "USDT" : "TRX";
       const baseAmount = amt * rate;
       const fee = baseAmount * 0.03; // 3% fee
       const totalAmount = baseAmount + fee;
       
-      const text = stage === "buy_usdt"
-        ? `✅ USDT Purchase Summary:\n💰 Amount: ${amt} USDT\n💵 Base Cost: ${baseAmount.toLocaleString()} MMK\n📊 Fee (3%): ${fee.toLocaleString()} MMK\n💳 Total: ${totalAmount.toLocaleString()} MMK`
-        : `✅ TRX Purchase Summary:\n💰 Amount: ${amt} TRX\n💵 Base Cost: ${baseAmount.toLocaleString()} MMK\n📊 Fee (3%): ${fee.toLocaleString()} MMK\n💳 Total: ${totalAmount.toLocaleString()} MMK`;
+      // Create order for admin approval
+      const orderId = uuidv4().split("-")[0].toUpperCase();
+      userOrders[orderId] = {
+        user_id: id,
+        username: ctx.from.username || "User",
+        lang,
+        crypto,
+        amount: amt,
+        base_mmk: baseAmount,
+        fee_mmk: fee,
+        total_mmk: totalAmount,
+        status: "Pending Approval",
+        file_id: null,
+        wallet: null
+      };
+
+      const text = `✅ ${crypto} Purchase Request:\n💰 Amount: ${amt} ${crypto}\n💵 Base Cost: ${baseAmount.toLocaleString()} MMK\n📊 Fee (3%): ${fee.toLocaleString()} MMK\n💳 Total: ${totalAmount.toLocaleString()} MMK\n\n⏳ Your order has been submitted for admin approval.\n🆔 Order ID: ${orderId}`;
       
       ctx.reply(text);
-      ctx.reply(messages[lang].payment_details, Markup.inlineKeyboard([
-        [Markup.button.callback("📤 Upload Proof", "upload_proof")]
-      ]));
+
+      // Send to admin for approval
+      bot.telegram.sendMessage(config.ADMIN_ID, 
+        `📋 New Order Request\n🆔 Order ID: ${orderId}\n👤 @${ctx.from.username || "User"} (ID: ${id})\n💎 ${crypto}: ${amt}\n💵 Total: ${totalAmount.toLocaleString()} MMK`, {
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: "✅ Approve Order", callback_data: `approve_order_${orderId}` }],
+            [{ text: "❌ Deny Order", callback_data: `deny_order_${orderId}` }]
+          ]
+        }
+      });
     }
     userStage[id] = null;
   }
