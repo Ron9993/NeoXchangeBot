@@ -371,7 +371,7 @@ bot.on("text", ctx => {
         wallet: null
       };
 
-      const text = `✅ ${crypto} Purchase Request:\n💰 Amount: ${amt} ${crypto}\n💵 Base Cost: ${baseAmount.toLocaleString()} MMK\n📊 Fee (3%): ${fee.toLocaleString()} MMK\n💳 Total: ${totalAmount.toLocaleString()} MMK\n\n⏳ Your order has been submitted for admin approval.\n🆔 Order ID: ${orderId}`;
+      const text = `✅ ${crypto} Purchase Request:\n💰 Amount: ${amt} ${crypto}\n💵 Base Cost: ${baseAmount.toLocaleString()} MMK\n📊 Service Fee (3% - includes transaction fees): ${fee.toLocaleString()} MMK\n💳 Total: ${totalAmount.toLocaleString()} MMK\n\n⏳ Your order has been submitted for admin approval.\n🆔 Order ID: ${orderId}`;
       
       ctx.reply(text);
 
