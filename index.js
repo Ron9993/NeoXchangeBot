@@ -309,9 +309,14 @@ bot.on("text", ctx => {
     const amt = parseFloat(ctx.message.text.replace(/[^0-9.]/g, ""));
     if (!isNaN(amt)) {
       const rate = stage === "buy_usdt" ? +currentRates.usdt : +currentRates.trx;
+      const baseAmount = amt * rate;
+      const fee = baseAmount * 0.03; // 3% fee
+      const totalAmount = baseAmount + fee;
+      
       const text = stage === "buy_usdt"
-        ? messages[lang].result_usdt(amt, rate)
-        : messages[lang].result_trx(amt, rate);
+        ? `✅ USDT Purchase Summary:\n💰 Amount: ${amt} USDT\n💵 Base Cost: ${baseAmount.toLocaleString()} MMK\n📊 Fee (3%): ${fee.toLocaleString()} MMK\n💳 Total: ${totalAmount.toLocaleString()} MMK`
+        : `✅ TRX Purchase Summary:\n💰 Amount: ${amt} TRX\n💵 Base Cost: ${baseAmount.toLocaleString()} MMK\n📊 Fee (3%): ${fee.toLocaleString()} MMK\n💳 Total: ${totalAmount.toLocaleString()} MMK`;
+      
       ctx.reply(text);
       ctx.reply(messages[lang].payment_details, Markup.inlineKeyboard([
         [Markup.button.callback("📤 Upload Proof", "upload_proof")]
