@@ -29,7 +29,10 @@ const messages = {
     track_result: (id, st, w) => `🆔 Order ID: ${id}\n📦 Status: ${st}\n🏦 Wallet: ${w || 'Not provided yet'}`,
     not_found: "❌ Order not found. Check the ID.",
     current_status: (st) => `🔔 Your order status is now: *${st}*`,
-    txid_received: (txid) => `🔗 *Transaction ID:* \`${txid}\`\n\n✅ Your crypto has been sent! You can track this transaction on the blockchain using the above ID.`
+    txid_received: (txid) => `🔗 *Transaction ID:* \`${txid}\`\n\n✅ Your crypto has been sent! You can track this transaction on the blockchain using the above ID.`,
+    order_approved: (oid, crypto, amount, total) => `✅ Your order has been approved!\n🆔 Order ID: ${oid}\n💎 ${crypto}: ${amount}\n💵 Total: ${total.toLocaleString()} MMK`,
+    order_denied: (oid, crypto, amount) => `❌ Your order has been denied.\n🆔 Order ID: ${oid}\n💎 ${crypto}: ${amount}\n\n💬 Please contact support for more information.`,
+    purchase_request: (crypto, amt, base, fee, total, oid) => `✅ ${crypto} Purchase Request:\n💰 Amount: ${amt} ${crypto}\n💵 Base Cost: ${base.toLocaleString()} MMK\n📊 Service Fee (3% - includes transaction fees): ${fee.toLocaleString()} MMK\n💳 Total: ${total.toLocaleString()} MMK\n\n⏳ Your order has been submitted for admin approval.\n🆔 Order ID: ${oid}`
   },
   zh: {
     welcome: "🌐 欢迎来到 NeoXchange！\n请选择您的语言：",
@@ -51,7 +54,10 @@ const messages = {
     track_result: (id, st, w) => `🆔 订单 ID: ${id}\n📦 状态: ${st}\n🏦 钱包: ${w || '尚未提供'}`,
     not_found: "❌ 未找到订单。请检查 ID。",
     current_status: (st) => `🔔 您的订单状态现在是：*${st}*`,
-    txid_received: (txid) => `🔗 *交易 ID:* \`${txid}\`\n\n✅ 您的加密货币已发送！您可以使用上述 ID 在区块链上跟踪此交易。`
+    txid_received: (txid) => `🔗 *交易 ID:* \`${txid}\`\n\n✅ 您的加密货币已发送！您可以使用上述 ID 在区块链上跟踪此交易。`,
+    order_approved: (oid, crypto, amount, total) => `✅ 您的订单已获批准！\n🆔 订单 ID: ${oid}\n💎 ${crypto}: ${amount}\n💵 总计: ${total.toLocaleString()} MMK`,
+    order_denied: (oid, crypto, amount) => `❌ 您的订单已被拒绝。\n🆔 订单 ID: ${oid}\n💎 ${crypto}: ${amount}\n\n💬 请联系客服了解更多信息。`,
+    purchase_request: (crypto, amt, base, fee, total, oid) => `✅ ${crypto} 购买申请:\n💰 数量: ${amt} ${crypto}\n💵 基础费用: ${base.toLocaleString()} MMK\n📊 服务费 (3% - 包含交易费): ${fee.toLocaleString()} MMK\n💳 总计: ${total.toLocaleString()} MMK\n\n⏳ 您的订单已提交待管理员批准。\n🆔 订单 ID: ${oid}`
   },
   my: {
     welcome: "🌐 NeoXchange မှ ကြိုဆိုပါတယ်!\nကျေးဇူးပြု၍ သင်၏ဘာသာစကားကို ရွေးချယ်ပါ:",
@@ -73,7 +79,10 @@ const messages = {
     track_result: (id, st, w) => `🆔 Order ID: ${id}\n📦 အခြေအနေ: ${st}\n🏦 Wallet: ${w || 'မသတ်မှတ်ရသေး'}`,
     not_found: "❌ မှာယူမှု မတွေ့ရှိပါ။ ID ကို စစ်ဆေးပါ။",
     current_status: (st) => `🔔 သင်၏ မှာယူမှု အခြေအနေသည် ယခု: *${st}*`,
-    txid_received: (txid) => `🔗 *Transaction ID:* \`${txid}\`\n\n✅ သင်၏ crypto ကို ပို့ပြီးပါပြီ! အထက်ပါ ID ကို အသုံးပြု၍ blockchain တွင် ဤ transaction ကို ခြေရာခံနိုင်ပါသည်။`
+    txid_received: (txid) => `🔗 *Transaction ID:* \`${txid}\`\n\n✅ သင်၏ crypto ကို ပို့ပြီးပါပြီ! အထက်ပါ ID ကို အသုံးပြု၍ blockchain တွင် ဤ transaction ကို ခြေရာခံနိုင်ပါသည်။`,
+    order_approved: (oid, crypto, amount, total) => `✅ သင်၏ မှာယူမှု ခွင့်ပြုပါပြီ!\n🆔 Order ID: ${oid}\n💎 ${crypto}: ${amount}\n💵 စုစုပေါင်း: ${total.toLocaleString()} MMK`,
+    order_denied: (oid, crypto, amount) => `❌ သင်၏ မှာယူမှု ငြင်းပယ်ခံရပါပြီ။\n🆔 Order ID: ${oid}\n💎 ${crypto}: ${amount}\n\n💬 ပိုမိုသိရှိရန် အကူအညီကို ဆက်သွယ်ပါ။`,
+    purchase_request: (crypto, amt, base, fee, total, oid) => `✅ ${crypto} ဝယ်ယူမှု တောင်းဆိုမှု:\n💰 ပမာဏ: ${amt} ${crypto}\n💵 အခြေခံ ကုန်ကျစရိတ်: ${base.toLocaleString()} MMK\n📊 ဝန်ဆောင်မှု ကြေး (3% - လွှဲငွေ ကုန်ကျစရိတ် ပါဝင်): ${fee.toLocaleString()} MMK\n💳 စုစုပေါင်း: ${total.toLocaleString()} MMK\n\n⏳ သင်၏ မှာယူမှုကို admin ခွင့်ပြုမှုအတွက် တင်ပြပြီးပါပြီ။\n🆔 Order ID: ${oid}`
   }
 };
 
@@ -273,7 +282,7 @@ bot.action(/approve_order_(.+)/, ctx => {
 
   // Send payment details to user
   bot.telegram.sendMessage(o.user_id, 
-    `✅ Your order has been approved!\n🆔 Order ID: ${oid}\n💎 ${o.crypto}: ${o.amount}\n💵 Total: ${o.total_mmk.toLocaleString()} MMK\n\n${messages[lang].payment_details}`, {
+    `${messages[lang].order_approved(oid, o.crypto, o.amount, o.total_mmk)}\n\n${messages[lang].payment_details}`, {
     reply_markup: {
       inline_keyboard: [
         [{ text: "📤 Upload Payment Proof", callback_data: "upload_proof" }]
@@ -295,8 +304,7 @@ bot.action(/deny_order_(.+)/, ctx => {
   ctx.answerCbQuery("Order denied!");
 
   // Notify user
-  bot.telegram.sendMessage(o.user_id, 
-    `❌ Your order has been denied.\n🆔 Order ID: ${oid}\n💎 ${o.crypto}: ${o.amount}\n\n💬 Please contact support for more information.`);
+  bot.telegram.sendMessage(o.user_id, messages[lang].order_denied(oid, o.crypto, o.amount));
 
   ctx.editMessageText(`❌ Order Denied\n🆔 ${oid}\n👤 @${o.username}\n💎 ${o.crypto}: ${o.amount}`);
 });
@@ -396,7 +404,7 @@ bot.on("text", ctx => {
         wallet: null
       };
 
-      const text = `✅ ${crypto} Purchase Request:\n💰 Amount: ${amt} ${crypto}\n💵 Base Cost: ${baseAmount.toLocaleString()} MMK\n📊 Service Fee (3% - includes transaction fees): ${fee.toLocaleString()} MMK\n💳 Total: ${totalAmount.toLocaleString()} MMK\n\n⏳ Your order has been submitted for admin approval.\n🆔 Order ID: ${orderId}`;
+      const text = messages[lang].purchase_request(crypto, amt, baseAmount, fee, totalAmount, orderId);
       
       ctx.reply(text);
 
