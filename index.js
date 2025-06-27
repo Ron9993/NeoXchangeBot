@@ -285,12 +285,8 @@ bot.on("photo", async ctx => {
       const lang = o.lang;
       
       // Send transaction screenshot to customer
-      const caption = o.crypto && o.amount && o.txid 
-        ? messages[lang].transaction_screenshot(oid, o.crypto, o.amount, o.txid)
-        : `📸 Transaction Screenshot\n🆔 Order ID: ${oid}\n\n✅ Your crypto has been sent! Please check your wallet.`;
-      
       await bot.telegram.sendPhoto(o.user_id, fileId, {
-        caption: caption
+        caption: messages[lang].transaction_screenshot(oid, o.crypto || 'Crypto', o.amount || 'N/A', o.txid || 'N/A')
       });
       
       // Confirm to admin
