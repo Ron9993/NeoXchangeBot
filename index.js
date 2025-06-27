@@ -87,12 +87,38 @@ const messages = {
 };
 
 function sendMenu(ctx, lang) {
+  const menuButtons = {
+    en: {
+      buy: "💱 Buy Crypto",
+      rates: "📊 Rates", 
+      upload: "📤 Upload Proof",
+      track: "🔍 Track Order",
+      support: "💬 Talk to Support"
+    },
+    zh: {
+      buy: "💱 购买加密货币",
+      rates: "📊 汇率",
+      upload: "📤 上传凭证", 
+      track: "🔍 跟踪订单",
+      support: "💬 联系客服"
+    },
+    my: {
+      buy: "💱 Crypto ဝယ်ယူရန်",
+      rates: "📊 နှုန်းထားများ",
+      upload: "📤 သက်သေ Upload လုပ်ရန်",
+      track: "🔍 Order စစ်ဆေးရန်", 
+      support: "💬 အကူအညီ ဆက်သွယ်ရန်"
+    }
+  };
+  
+  const buttons = menuButtons[lang] || menuButtons.en;
+  
   ctx.reply(messages[lang].menu, Markup.inlineKeyboard([
-    [Markup.button.callback("💱 Buy Crypto", "choose_crypto")],
-    [Markup.button.callback("📊 Rates", "check_rates")],
-    [Markup.button.callback("📤 Upload Proof", "upload_proof")],
-    [Markup.button.callback("🔍 Track Order", "track_order")],
-    [Markup.button.url("💬 Talk to Support", "https://t.me/Mr305xie")]
+    [Markup.button.callback(buttons.buy, "choose_crypto")],
+    [Markup.button.callback(buttons.rates, "check_rates")],
+    [Markup.button.callback(buttons.upload, "upload_proof")],
+    [Markup.button.callback(buttons.track, "track_order")],
+    [Markup.button.url(buttons.support, "https://t.me/Mr305xie")]
   ]));
 }
 
@@ -108,7 +134,8 @@ bot.start(ctx => {
 
 bot.command("language", ctx => {
   const id = ctx.from.id;
-  ctx.reply(messages['en'].welcome, Markup.inlineKeyboard([
+  const currentLang = userLang[id] || 'en';
+  ctx.reply(messages[currentLang].welcome, Markup.inlineKeyboard([
     [Markup.button.callback("🇬🇧 English", "lang_en")],
     [Markup.button.callback("🇨🇳 中文", "lang_zh")],
     [Markup.button.callback("🇲🇲 မြန်မာ", "lang_my")]
