@@ -286,7 +286,7 @@ bot.on("photo", async ctx => {
       
       // Send transaction screenshot to customer
       await bot.telegram.sendPhoto(o.user_id, fileId, {
-        caption: messages[lang].transaction_screenshot(oid, o.crypto || 'Crypto', o.amount || 'N/A', o.txid || 'N/A')
+        caption: messages[lang].transaction_screenshot(oid, o.crypto || 'Crypto', o.amount, o.txid || 'N/A')
       });
       
       // Confirm to admin
