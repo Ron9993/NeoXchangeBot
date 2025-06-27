@@ -259,7 +259,7 @@ bot.on("photo", async ctx => {
       const txidInfo = o.txid ? `\n🔗 Transaction ID: ${o.txid}` : '';
       
       await bot.telegram.sendPhoto(o.user_id, fileId, {
-        caption: `📸 Transaction Screenshot\n🆔 Order ID: ${oid}${cryptoInfo}${txidInfo}\n\n✅ Your crypto has been sent! Please check your wallet.`
+        caption: `📸 Transaction Screenshot\n🆔 Order ID: ${oid}${cryptoInfo}${txidInfo}\n\n✅ Your crypto has been sent! Please check your wallet.\n\n💰 Amount: ${o.amount || 'N/A'} ${o.crypto || 'Crypto'}`
       });
       
       // Confirm to admin
