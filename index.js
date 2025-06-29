@@ -6,7 +6,7 @@ const bot = new Telegraf(config.BOT_TOKEN);
 const userLang = {};
 const userStage = {};
 const userOrders = {};
-let currentRates = { usdt: "4620", trx: "1340" };
+let currentRates = { usdt: "4600", trx: "1300" };
 
 const messages = {
   en: {
