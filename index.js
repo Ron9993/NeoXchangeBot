@@ -6,7 +6,7 @@ const bot = new Telegraf(config.BOT_TOKEN);
 const userLang = {};
 const userStage = {};
 const userOrders = {};
-let currentRates = { usdt: "4600", trx: "1300" };
+let currentRates = { usdt: "4610", trx: "1310" };
 
 const messages = {
   en: {
@@ -72,7 +72,7 @@ const messages = {
     result_usdt: (amt, rate) => `✅ သင်သည် ခန့်မှန်းခြေ ${(amt * rate).toLocaleString()} MMK ပေးရမည်`,
     result_trx: (amt, rate) => `✅ သင်သည် ခန့်မှန်းခြေ ${(amt * rate).toLocaleString()} MMK ပေးရမည်`,
     payment_details: "💳 ကျေးဇူးပြု၍ MMK ကို လွှဲပါ:\n\n🔹 KBZPay: Htun Sein 09777888283\n🔹 UABPay: Htun Sein 09666000106",
-    ask_proof: "📤 သင်၏ ငွေပေးချေမှု ဓာတ်ပုံကို upload လုပ်ပါ:",
+    ask_proof: "📤 သင်၏ ငွေပေးချေမှု Screenshot ဓာတ်ပုံကို upload လုပ်ပါ:",
     thanks_proof: "✅ သက်သေထောက်ခံချက် ရရှိပါပြီ! Admin မှ မကြာမီ စစ်ဆေးပါမည်။",
     approved: "✅ ငွေပေးချေမှု အတည်ပြုပါပြီ! သင်၏ TRC20 wallet လိပ်စာကို ပို့ပါ:",
     wallet_received: (w) => `✅ Wallet လိပ်စာ ရရှိပါပြီ: ${w}\nသင်၏ crypto ကို မကြာမီ ပို့ပေးပါမည်။`,
@@ -108,7 +108,7 @@ function sendMenu(ctx, lang) {
     my: {
       buy: "💱 Crypto ဝယ်ယူရန်",
       rates: "📊 နှုန်းထားများ",
-      upload: "📤 သက်သေ Upload လုပ်ရန်",
+      upload: "📤 သက်သေ SS Upload လုပ်ရန်",
       track: "🔍 Order စစ်ဆေးရန်", 
       support: "💬 အကူအညီ ဆက်သွယ်ရန်"
     }
