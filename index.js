@@ -121,7 +121,7 @@ function sendMenu(ctx, lang) {
     [Markup.button.callback(buttons.rates, "check_rates")],
     [Markup.button.callback(buttons.upload, "upload_proof")],
     [Markup.button.callback(buttons.track, "track_order")],
-    [Markup.button.url(buttons.support, "https://t.me/Mr305xie")]
+    [Markup.button.url(buttons.support, "https://t.me/edenvault_88")]
   ]));
 }
 
